@@ -1,5 +1,6 @@
 package com.example.luigidigirolamo.calendar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,9 +22,12 @@ public class UserIndex extends AppCompatActivity {
     public static EventsAdapter adapter;
     UserInfos uI = UserInfos.getInstance();
 
+    private Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         setContentView(R.layout.activity_user_index);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -34,7 +38,9 @@ public class UserIndex extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                //show information event
+                Intent intent = new Intent(context, NewEventActivity.class);
+                //intent.putExtra("EventInfo", sessionId);
+                startActivity(intent);
             }
         });
         lView.setAdapter(adapter);
@@ -77,9 +83,22 @@ public class UserIndex extends AppCompatActivity {
         new LoginOperation(this).execute(uI.getUserName(), uI.getPassword(), uI.getIpAddress());
     }
     public void newEvent() {
-        startActivity(new Intent(this, NewEventActivity.class));
+        Intent intent = new Intent(this, NewEventActivity.class);
+        startActivity(intent);
     }
     public void calendars() {
 
+    }
+
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
     }
 }

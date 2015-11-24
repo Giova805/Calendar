@@ -11,8 +11,9 @@ public class Event {
     private String title;
     private String startdate;
     private String enddate;
+    private String id;
 
-    public Event (String title, String startdate, String enddate) {
+    public Event (String title, String startdate, String enddate, String id) {
         String format = new String ("MM-dd HH:mm");
 
         Date datestart = null;
@@ -31,6 +32,7 @@ public class Event {
         this.title = title;
         this.startdate = startdate;
         this.enddate = enddate;
+        this.id = id;
     }
 
     public String getTitle() {

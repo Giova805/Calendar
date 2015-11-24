@@ -1,29 +1,27 @@
 package com.example.luigidigirolamo.calendar;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventsOperation extends AsyncTask<Void, Void, JSONArray> {
+/**
+ * Created by giovanni on 24/11/2015.
+ */
+public class EventsCreate  extends AsyncTask<Void, Void, JSONArray> {
     Activity activity;
 
-    public EventsOperation(Activity activity) {
+    public EventsCreate(Activity activity) {
         this.activity = activity;
     }
 
@@ -33,11 +31,14 @@ public class EventsOperation extends AsyncTask<Void, Void, JSONArray> {
         UserInfos userInfos = UserInfos.getInstance();
         String response = "";
         String address = userInfos.getIpAddress();
+        JSONObject eventInfo = new JSONObject();
         try {
-            url = new URL(address+"mobile/users/"+userInfos.getUserName()+"/token/"+userInfos.getToken()+"/events");
+            url = new URL(address+"users/"+userInfos.getUserName()+"/token/"+userInfos.getToken()+"/events");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("Content-Type", "application/json");
+            //eventInfo.put("name", "eventName");
+
             urlConnection.connect();
 
             BufferedReader in = new BufferedReader(
@@ -61,20 +62,8 @@ public class EventsOperation extends AsyncTask<Void, Void, JSONArray> {
     @Override
     protected void onPostExecute(JSONArray jsonArray) {
         if(jsonArray!=null) {
-            List<Event> list = new ArrayList<Event>();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                try {
-                    list.add(i, convertEvent(jsonArray.getJSONObject(i)));
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            UserIndex.adapter.setItemList(list);
-            UserIndex.adapter.notifyDataSetChanged();
+            activity.startActivity(new Intent(activity, UserIndex.class));
         }
-        else
-            activity.startActivity(new Intent(activity, MainActivity.class));
     }
 
     private Event convertEvent(JSONObject obj) throws JSONException {
